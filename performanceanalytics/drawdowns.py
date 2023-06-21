@@ -42,7 +42,7 @@ def find_drawdowns(series: pd.Series):
     current_dd = None
     dd_list = []
 
-    for dt, value in dd_series.iteritems():
+    for dt, value in dd_series.items():
         # if the value is lower than the previous we are in a drawdown
         if value < prior_max:
             # if we are not already in a drawdown we are now
