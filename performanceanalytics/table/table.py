@@ -280,7 +280,7 @@ def replace_col_names(df, colnames, inplace=True):
 
 def create_downside_table(data, managercols, MAR=.02, rf=.005):
     # first see if managercols is a single
-    if not isinstance(managercols, collections.Iterable):
+    if not isinstance(managercols, collections.abc.Iterable):
         managercols = [managercols]
 
     colnames = []
