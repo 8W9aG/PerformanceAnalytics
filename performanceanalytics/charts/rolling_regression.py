@@ -20,11 +20,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from collections import Iterable
+import collections
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import xarray as xr
 
 
 def create_rolling_regression(data, width, bmark_col, manager_cols, rf_col=None, **kwargs):
@@ -39,7 +40,7 @@ def create_rolling_regression(data, width, bmark_col, manager_cols, rf_col=None,
     :return: the chart
     """
 
-    if not isinstance(manager_cols, Iterable):
+    if not isinstance(manager_cols, collections.abc.Iterable):
         manager_cols = [manager_cols]
 
     # the series for the benchmark
@@ -108,11 +109,8 @@ def roll(df, w, **kwargs):
     :return: a multi column window
     """
     roll_array = np.dstack([df.values[i:i + w, :] for i in range(len(df.index) - w + 1)]).T
-    panel = pd.Panel(roll_array,
-                     items=df.index[w - 1:],
-                     major_axis=df.columns,
-                     minor_axis=pd.Index(range(w), name='roll'))
-    return panel.to_frame().unstack().T.groupby(level=0, **kwargs)
+    panel = xr.DataArray(roll_array, [df.index[w - 1:], df.columns, range(w)])
+    return panel.to_dataframe("roll").unstack().T.groupby(level=0, **kwargs)
 
 
 def calc_reg(series):
